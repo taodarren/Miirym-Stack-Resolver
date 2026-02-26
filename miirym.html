@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Scourge of Valkas Simulator</title>
+
+<style>
+body {
+  background: #111;
+  color: #eee;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.panel {
+  background: #1c1c1c;
+  padding: 20px;
+  border-radius: 12px;
+  width: 40%;
+  min-height: 300px;
+}
+
+button {
+  padding: 10px 15px;
+  margin: 5px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+.cast { background: darkred; color: white; }
+.resolve { background: darkblue; color: white; }
+
+.stack-item {
+  background: #333;
+  margin: 5px 0;
+  padding: 6px;
+  border-radius: 6px;
+}
+
+.damage {
+  font-size: 28px;
+  font-weight: bold;
+  color: crimson;
+  transition: transform 0.2s ease;
+}
+
+.pulse {
+  transform: scale(1.2);
+}
+</style>
+</head>
+
+<body>
+
+<h1>🔥 Scourge of Valkas + Miirym Simulator 🐉</h1>
+
+<label>Miiryms on battlefield:</label>
+<input type="number" id="miirymInput" value="2" min="0">
+
+<br><br>
+
+<button class="cast" onclick="castScourge()">Cast Scourge</button>
+<button class="resolve" onclick="resolveOne()">Resolve One</button>
+<button class="resolve" onclick="resolveAll()">Resolve All</button>
+
+<h2 class="damage" id="damageDisplay">Total Damage: 0</h2>
+
+<div class="container">
+
+<div class="panel">
+<h3>Battlefield</h3>
+<div id="battlefield"></div>
+</div>
+
+<div class="panel">
+<h3>Stack (Top at Bottom)</h3>
+<div id="stack"></div>
+</div>
+
+</div>
+
+<script>
+let state = {
+  miirymCount: 0,
+  scourgeCount: 0,
+  stack: [],
+  totalDamage: 0
+};
+
+function updateUI() {
+  document.getElementById("battlefield").innerHTML =
+    "🐉 x" + state.miirymCount + "<br>🔥 x" + state.scourgeCount;
+
+  const stackDiv = document.getElementById("stack");
+  stackDiv.innerHTML = "";
+
+  state.stack.forEach(item => {
+    const div = document.createElement("div");
+    div.className = "stack-item";
+    div.innerText = item.description;
+    stackDiv.appendChild(div);
+  });
+
+  const dmg = document.getElementById("damageDisplay");
+  dmg.innerText = "Total Damage: " + state.totalDamage;
+  dmg.classList.add("pulse");
+  setTimeout(() => dmg.classList.remove("pulse"), 150);
+}
+
+function pushStack(description, resolveFn) {
+  state.stack.push({ description, resolve: resolveFn });
+  updateUI();
+}
+
+function castScourge() {
+  state.miirymCount = parseInt(document.getElementById("miirymInput").value);
+  state.scourgeCount = 1;
+  state.totalDamage = 0;
+  state.stack = [];
+
+  // Original Scourge trigger (bottom)
+  pushStack("Original Scourge Trigger", () => {
+    dealDamage();
+  });
+
+  // Miirym triggers
+  for (let i = 1; i <= state.miirymCount; i++) {
+    pushStack("Miirym Trigger #" + i, () => {
+      state.scourgeCount++;
+
+      let currentScourges = state.scourgeCount;
+      for (let j = 1; j <= currentScourges; j++) {
+        pushStack("Scourge Trigger #" + j, () => {
+          dealDamage();
+        });
+      }
+    });
+  }
+
+  updateUI();
+}
+
+function dealDamage() {
+  let damage = state.scourgeCount + state.miirymCount;
+  state.totalDamage += damage;
+}
+
+function resolveOne() {
+  if (state.stack.length === 0) return;
+  let item = state.stack.pop();
+  item.resolve();
+  updateUI();
+}
+
+function resolveAll() {
+  while (state.stack.length > 0) {
+    resolveOne();
+  }
+}
+</script>
+
+</body>
+</html>
