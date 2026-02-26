@@ -1,0 +1,219 @@
+body {
+  background: #1a1a1a;
+  color: #eee;
+  font-size: 50px;
+  font-family: "Helvetica Bold", Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  font-weight: bold;
+  overflow-x: hidden;
+}
+
+h1 {
+  font-size: 120px;
+  text-align: left;
+  margin: 0 0 20px 0;
+  font-weight: bold;
+  color: #fff;
+}
+
+.container {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.panel {
+  background: #49494983;
+  padding: 20px;
+  border-radius: 12px;
+  width: 40%;
+  min-height: 300px;
+  position: relative;
+}
+
+.panel h3 {
+  text-align: center;
+  font-weight: bold;
+  font-size: 36px;
+  margin-bottom: 15px;
+}
+
+#miirymInput {
+  font-size: 50px;
+  font-weight: bold;
+  color: #000000;
+  background: #ffffff;
+  margin-left: 20px;
+  border: none;
+  border-radius: 8px;
+  width: 100px;
+  height: 90px;
+  text-align: center;
+}
+
+button {
+  font-weight: bold;
+  padding: 20px 15px;
+  margin: 5px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  height: 90px;
+}
+/* Resolve buttons colors */
+#resolveButtons button:nth-child(1) { /* Resolve One */
+    background: #ffffff;  /* Green */
+    color: rgb(0, 0, 0);
+}
+
+#resolveButtons button:nth-child(2) { /* Resolve All */
+    background: #ffffff;  /* Red */
+    color: rgb(0, 0, 0);
+}
+
+#resolveButtons button:nth-child(3) { /* Show Result */
+    background: #ffffff;  /* Blue */
+    color: rgb(0, 0, 0);
+}
+
+
+/* Keep the hover effect */
+#resolveButtons button:hover {
+    opacity: 0.8;
+}
+
+button:hover { opacity: 0.8; }
+
+.etb { background: #fff; color: #000; }
+.resolve { background: #fff; color: #000; }
+
+
+#resolveButtons {
+  text-align: center;
+  margin-top: 10px;
+}
+
+#resolveButtons button {
+  display: inline-block;
+  margin: 5px;
+}
+
+.damage {
+  font-size: 28px;
+  font-weight: bold;
+  color: #fff;
+  display: inline-block;
+  transition: transform 0.2s ease;
+  transform-origin: center;
+}
+
+.pulse { transform: scale(1.2); }
+
+#damageDisplay {
+  font-size: 60px;
+  display: block;
+  clear: both;
+  margin-top: 20px;
+  text-align: center;
+}
+
+#battlefield {
+  position: relative;
+  width: 300px;
+  margin: auto;
+  min-height: 400px;
+}
+
+#battlefield img {
+  position: absolute;
+  width: 150px;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.7);
+}
+
+#stack { position: relative; }
+
+.ability {
+  position: absolute;
+  width: 200px;
+  opacity: 0;
+  transform: translateX(-300px);
+  transition: transform 0.1s ease, opacity 0.1s ease;
+  box-shadow: 0 14px 18px rgba(0,0,0,0.7);
+}
+
+.ability.show { opacity: 1; transform: translateX(0); }
+
+.battlefield-creature {
+  position: absolute;
+  width: 200px;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.7);
+  opacity: 0;
+  transform: translateX(-500px) scale(1.5);
+  transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+.battlefield-creature.show {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+.engine-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.cast {
+    position: relative;
+    width: 260px;
+    height: 90px;
+    font-family: "Helvetica Bold", Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    color: white;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 12px;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+#controls {
+    display: flex;
+    justify-content: flex-start; /* Centers items horizontally */
+    align-items: center; /* Centers items vertically */
+    margin-bottom: 30px;
+}
+
+.cast span,
+.cast {
+    position: relative;
+    z-index: 2;
+}
+
+.scourge-btn {
+    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("valkas.png") center/cover no-repeat;
+    background-size: 122%;
+    background-position: center 15%;
+}
+
+.terror-btn {
+    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("terror.png") center/cover no-repeat;
+    background-size: 120%;
+    background-position: center 30%;
+}
+
+.miirym-btn {
+    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("miirym.png") center/cover no-repeat;
+    background-size: 120%;
+    background-position: center 30%;
+}
+
+/* Hover glow effect */
+.cast:hover {
+    opacity:0.8
+}
