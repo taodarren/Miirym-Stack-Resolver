@@ -8,8 +8,21 @@
 body {
   background: #111;
   color: #eee;
-  font-family: Arial, sans-serif;
-  text-align: center;
+  font-size: 50px;        /* make it big */
+  font-family: "Helvetica Bold", Helvetica, Arial, sans-serif; /* Helvetica Bold for all text */
+  margin: 0;
+  padding: 20px;
+  font-weight: bold; /* ensure bold everywhere */
+  overflow-x: hidden;
+}
+
+/* Title styling */
+h1 {
+  font-size: 120px;        /* make it big */
+  text-align: left;       /* top-left alignment */
+  margin: 0 0 20px 0;
+  font-weight: bold;      /* ensure bold */
+  color: #ffffff;
 }
 
 .container {
@@ -27,26 +40,50 @@ body {
   position: relative;
 }
 
+/* Center the panel headings */
+.panel h3 {
+  text-align: center;
+  font-family: "Helvetica Bold", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 36px; /* optional: make headings bigger */
+  margin-bottom: 15px;
+}
+/* Make the number input match battlefield Miirym size and font */
+#miirymInput {
+  font-size: 50px; /* same as body text / battlefield labels */
+  font-family: "Helvetica Bold", Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  color: #eee;
+  background: #1c1c1c; /* match panels */
+  border: none;
+  border-radius: 8px;
+  padding: 5px 10px;
+  width: 100px; /* adjust width to fit numbers nicely */
+  text-align: center;
+}
+
 button {
-  padding: 10px 15px;
+  background: white;      /* white background for all buttons */
+  color: black;           /* black text so it’s readable */
+  font-weight: bold;
+  padding: 20px 15px;     /* increase vertical padding for height */
   margin: 5px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  font-weight: bold;
+  font-size: 24px;        /* adjust font size if you want it bigger */
+  height: 60px;          /* twice the previous height (~50px original) */
 }
-
 button:hover {
   opacity: 0.8;
 }
-
-.cast { background: darkred; color: white; }
-.resolve { background: darkblue; color: white; }
+.cast { background: rgb(255, 255, 255); color: rgb(0, 0, 0); }
+.resolve { background: rgb(255, 255, 255); color: rgb(0, 0, 0); }
 
 .damage {
   font-size: 28px;
   font-weight: bold;
-  color: crimson;
+  color: rgb(255, 255, 255);
   transition: transform 0.2s ease;
   display: inline-block;
   transform-origin: center;
@@ -82,31 +119,79 @@ button:hover {
   width: 200px;
   opacity: 0;
   transform: translateX(-300px); /* start off left */
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.1s ease, opacity 0.1s ease;
+  box-shadow: 0 14px 18px rgba(0,0,0,0.7);
+
 }
 
 .ability.show {
   opacity: 1;
   transform: translateX(0);
 }
+/* Creature entrance animation */
+.battlefield-creature {
+  position: absolute;
+  width: 100px;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.7);
+  opacity: 0;               /* start invisible */
+  transform: translateX(-500px) scale(1.5); /* start offscreen & big */
+  transition: transform 0.1s ease, opacity 0.1s ease;
+}
+
+.battlefield-creature.show {
+  opacity: 1;
+  transform: translateX(0) scale(1); /* move to final pos & normal size */
+}
+
+#resolveButtons {
+  text-align: center;   /* center the buttons inside this div */
+  margin-top: 10px;     /* optional spacing above */
+}
+
+#resolveButtons button {
+  display: inline-block; /* keep buttons on same line */
+  margin: 5px;           /* spacing between them */
+}
+button.cast#castScourgeButton {
+  display: block;        /* ensure it’s on its own line */
+  margin: 20px auto;     /* top & bottom 20px, center horizontally */
+}
+
+#damageDisplay {
+  font-size: 60px;
+  display: block;   /* ensures it occupies full width */
+  clear: both;      /* forces it below floated/inline-block elements */
+  margin-top: 20px; /* spacing from buttons */
+  text-align: center; /* optional: center it under buttons */
+  
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>🔥 Scourge of Valkas + Miirym Simulator 🐉</h1>
+<h1>MIIRYM STACK RESOLVER</h1>
 
-<label>Miiryms on battlefield:</label>
-<input type="number" id="miirymInput" value="2" min="0">
+<div id="controls">
+  <label>MIIRYMS TO ENTER BATTLEFIELD:</label>
+  <input type="number" id="miirymInput" value="2" min="0">
+  <button class="cast" onclick="etbMiiryms()">ETB!</button>
 
-<br><br>
+  <br><br>
 
-<button class="cast" onclick="castScourge()">Cast Scourge</button>
-<button class="resolve" onclick="resolveOne()">Resolve One</button>
-<button class="resolve" onclick="resolveAll()">Resolve All</button>
+<button id="castScourgeButton" class="cast" onclick="castScourge()">CAST SCOURGE OF VALKAS</button>
 
-<h2 class="damage" id="damageDisplay">Total Damage: 0</h2>
+<div id="resolveButtons">
+  <button class="resolve" onclick="resolveOne()">Resolve One</button>
+  <button class="resolve" onclick="resolveAll()">Resolve All</button>
+  <button class="resolve" onclick="showResult()">Show Result</button>
+</div>
 
+  <h2 class="damage" id="damageDisplay">Total Damage: 0</h2>
+</div>
 <div class="container">
 
   <div class="panel">
@@ -115,12 +200,12 @@ button:hover {
   </div>
 
   <div class="panel">
-    <h3>Stack (Top at Bottom)</h3>
+    <h3>Stack</h3>
     <div id="stack"></div>
   </div>
 
 </div>
-
+<audio id="roarSound" src="etb.mp3" preload="auto"></audio>
 <script>
 let state = {
   miirymCount: 0,
@@ -129,14 +214,79 @@ let state = {
   totalDamage: 0
 };
 
+function etbMiiryms() {
+  // Read input
+  state.miirymCount = parseInt(document.getElementById("miirymInput").value);
+
+  // Clear battlefield
+  const battlefieldDiv = document.getElementById("battlefield");
+
+  // Remove all Miirym and Scourge images
+  Array.from(battlefieldDiv.querySelectorAll("img")).forEach(img => {
+    if (img.src.includes("miirym.png") || img.src.includes("valkas.png")) img.remove();
+  });
+
+  // Reset battlefield state
+  battlefieldState.miirym = 0;
+  battlefieldState.scourge = 0;
+  state.scourgeCount = 0;
+
+  // Clear stack (optional if you want)
+  state.stack = [];
+  document.getElementById("stack").innerHTML = "";
+
+  // Add Miiryms to battlefield
+  updateBattlefield();
+}
+
+function shakeScreen(flashColor = 'rgba(103, 16, 16, 1)') {
+  const body = document.body;
+  const duration = 300; // shake duration in ms
+  const intensity = 5;  // shake distance in pixels
+
+  const start = performance.now();
+
+  // Flash instantly (no transition)
+  body.style.transition = '';       // remove any transition
+  body.style.background = flashColor;
+
+  // After 0.05s, fade back to normal over 0.3s
+  setTimeout(() => {
+    body.style.transition = 'background 0.3s';
+    body.style.background = '#111';
+  }, 50);
+
+  // Shake animation (independent of color)
+  function animate(now) {
+    const elapsed = now - start;
+    if (elapsed < duration) {
+      const x = (Math.random() - 0.5) * 2 * intensity;
+      const y = (Math.random() - 0.5) * 2 * intensity;
+      body.style.transform = `translate(${x}px, ${y}px)`;
+      requestAnimationFrame(animate);
+    } else {
+      body.style.transform = '';
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
+
 function getStackStartOffset() {
   const stackDiv = document.getElementById("stack");
   const headingHeight = stackDiv.previousElementSibling.offsetHeight;
   return headingHeight + 10; // small padding
 }
 
+function pushStackStaggered(abilities, delay = 200) {
+  abilities.forEach((abilityFn, index) => {
+    setTimeout(() => {
+      pushStack(abilityFn.description, abilityFn.resolve);
+    }, index * delay);
+  });
+}
+
 function castScourge() {
-  state.miirymCount = parseInt(document.getElementById("miirymInput").value);
   state.scourgeCount = 1;
   state.totalDamage = 0;
   state.stack = [];
@@ -145,17 +295,45 @@ function castScourge() {
   const stackDiv = document.getElementById("stack");
   stackDiv.innerHTML = "";
 
+  // Clear old Valkas from battlefield, but keep Miiryms
+  const battlefieldDiv = document.getElementById("battlefield");
+  Array.from(battlefieldDiv.querySelectorAll("img")).forEach(img => {
+    if (!img.src.includes("miirym.png")) img.remove();
+  });
+
+  // Reset battlefield state for scourge only
+  battlefieldState.scourge = 0;
+
+  // Push initial Scourge triggers
   pushStack("Original Scourge Trigger", () => dealDamage());
 
-  for (let i = 1; i <= state.miirymCount; i++) {
-    pushStack("Miirym Trigger #" + i, () => {
+  let staggeredAbilities = [];
+
+for (let i = 1; i <= state.miirymCount; i++) {
+  staggeredAbilities.push({
+    description: "Miirym Trigger #" + i,
+    resolve: () => {
       state.scourgeCount++;
       let currentScourges = state.scourgeCount;
+      let innerAbilities = [];
       for (let j = 1; j <= currentScourges; j++) {
-        pushStack("Scourge Trigger #" + j, () => dealDamage());
+        innerAbilities.push({
+          description: "Scourge Trigger #" + j,
+          resolve: () => dealDamage()
+        });
       }
-    });
-  }
+      // Push inner Scourge triggers staggered too
+      pushStackStaggered(innerAbilities, 50);
+    }
+  });
+}
+
+// Push all Miirym triggers staggered
+pushStackStaggered(staggeredAbilities, 50);
+
+  // Add new Valkas to battlefield
+  updateBattlefield();
+  updateDamage();
 }
 function pushStack(description, resolveFn) {
   const index = state.stack.length;
@@ -206,7 +384,7 @@ function resolveOne() {
   exitImg.style.position = "absolute";
   exitImg.style.left = (stackWidth / 2 - 100) + "px";
   exitImg.style.top = startOffset + topIndex * abilityOverlap + "px";
-  exitImg.style.transition = "transform 0.3s ease, opacity 0.3s ease";
+  exitImg.style.transition = "transform 0.1s ease, opacity 0.1s ease";
   stackDiv.appendChild(exitImg);
 
   requestAnimationFrame(() => {
@@ -227,44 +405,126 @@ function resolveOne() {
 }
 
 function resolveAll() {
-  while (state.stack.length > 0) resolveOne();
-}
+  if (state.stack.length === 0) return;
 
+  const interval = setInterval(() => {
+    if (state.stack.length === 0) {
+      clearInterval(interval);
+      return;
+    }
+    resolveOne();
+  }, 100); // 100ms = 0.1 second
+}
 function dealDamage() {
   state.totalDamage += state.scourgeCount + state.miirymCount;
-}
 
+  // Play Valkas damage sound (stackable)
+  const audio = new Audio("fireball.mp3");
+  audio.play();
+
+  // Shake + flash
+  shakeScreen();
+}
+let battlefieldState = {
+  miirym: 0,
+  scourge: 0
+};
 function updateBattlefield() {
   const battlefieldDiv = document.getElementById("battlefield");
-  battlefieldDiv.innerHTML = "";
 
   const verticalOverlap = 30;
   const startXMiirym = 10;
   const startXValkas = 150;
   const startY = 10;
 
-  for (let i = 0; i < state.miirymCount; i++) {
+  // Add new Miirym creatures
+  for (let i = battlefieldState.miirym; i < state.miirymCount; i++) {
     const cardImg = document.createElement("img");
     cardImg.src = "miirym.png";
+    cardImg.classList.add("battlefield-creature");
     cardImg.style.left = startXMiirym + "px";
     cardImg.style.top = startY + i * verticalOverlap + "px";
     battlefieldDiv.appendChild(cardImg);
+
+    // Animate in
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => cardImg.classList.add("show"));
+    });
+    // Play roar once per new Valkas
+    const roarAudio = document.getElementById("roarSound");
+    roarAudio.currentTime = 0; 
+    roarAudio.play();
   }
 
-  for (let i = 0; i < state.scourgeCount; i++) {
+  // Add new Scourge creatures
+  for (let i = battlefieldState.scourge; i < state.scourgeCount; i++) {
     const cardImg = document.createElement("img");
     cardImg.src = "valkas.png";
+    cardImg.classList.add("battlefield-creature");
     cardImg.style.left = startXValkas + "px";
     cardImg.style.top = startY + i * verticalOverlap + "px";
     battlefieldDiv.appendChild(cardImg);
-  }
-}
 
+    // Animate in
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => cardImg.classList.add("show"));
+    });
+    // Play roar once per new Valkas
+    const roarAudio = new Audio("etb.mp3");
+    roarAudio.play();
+  }
+
+  // Update battlefield state
+  battlefieldState.miirym = state.miirymCount;
+  battlefieldState.scourge = state.scourgeCount;
+}
 function updateDamage() {
   const dmg = document.getElementById("damageDisplay");
   dmg.innerText = "Total Damage: " + state.totalDamage;
   dmg.classList.add("pulse");
   setTimeout(() => dmg.classList.remove("pulse"), 150);
+}
+
+function showResult() {
+  state.miirymCount = parseInt(document.getElementById("miirymInput").value);
+  state.scourgeCount = 1;
+  state.totalDamage = 0;
+
+  // Simulate stack manually
+  let tempStack = [];
+
+  // Original Scourge trigger
+  tempStack.push(() => {
+    state.totalDamage += state.scourgeCount + state.miirymCount;
+  });
+
+  // Add Miirym triggers
+  for (let i = 1; i <= state.miirymCount; i++) {
+    tempStack.push(() => {
+      state.scourgeCount++;
+      let currentScourges = state.scourgeCount;
+      for (let j = 1; j <= currentScourges; j++) {
+        tempStack.push(() => {
+          state.totalDamage += state.scourgeCount + state.miirymCount;
+        });
+      }
+    });
+  }
+
+  // Resolve the stack immediately
+  while (tempStack.length > 0) {
+    let fn = tempStack.pop(); // Top of stack
+    fn();
+  }
+
+  // Update visuals
+  state.stack = [];
+  updateBattlefield();
+  updateDamage();
+  dealDamage();
+
+  // Clear stack display
+  document.getElementById("stack").innerHTML = "";
 }
 </script>
 
