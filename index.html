@@ -10,30 +10,39 @@
 <h1>MIIRYM STACK SIMULATOR</h1>
 
 <div id="controls">
-  <label>MIIRYMS TO ENTER BATTLEFIELD:</label>
-  <input type="number" id="miirymInput" value="4" min="0">
-  <button class="cast miirym-btn" onclick="etbMiiryms()">ENTER MIIRYM</button>
+  <!-- Miirym input/button -->
+  <div class="control-row">
+    <label>MIIRYM COUNT:</label>
+    <input type="number" id="miirymInput" value="4" min="0">
+    <button class="cast miirym-btn" onclick="spawnMiiryms()">ENTER MIIRYM</button>
+  </div>
+
+  <!-- Dragon input/button -->
+  <div class="control-row">
+    <label>DRAGON TOKEN COUNT:</label>
+    <input type="number" id="dragonInput" value="0" min="0">
+    <button class="cast dragon-btn" onclick="spawnDragons()">ENTER DRAGON TOKEN</button>
+  </div>
 </div>
-  <br><br>
+<br><br>
 
-  <div class="engine-buttons">
-    <button id="castScourgeButton" class="cast scourge-btn" onclick="castScourge()">
-      CAST SCOURGE OF VALKAS
-    </button>
+<div class="engine-buttons">
+  <button id="castScourgeButton" class="cast scourge-btn" onclick="castScourge()">
+    CAST SCOURGE OF VALKAS
+  </button>
 
-    <button id="castTerrorButton" class="cast terror-btn" onclick="castTerror()">
-      CAST TERROR OF THE PEAKS
-    </button>
-  </div>
+  <button id="castTerrorButton" class="cast terror-btn" onclick="castTerror()">
+    CAST TERROR OF THE PEAKS
+  </button>
+</div>
 
-  <div id="resolveButtons">
-    <button class="resolve" onclick="resolveOne()">Resolve One</button>
-    <button class="resolve" onclick="resolveAll()">Resolve All</button>
-    <button class="resolve" onclick="showResult()">Show Result</button>
-  </div>
+<div id="resolveButtons">
+  <button class="resolve" onclick="resolveOne()">Resolve One</button>
+  <button class="resolve" onclick="resolveAll()">Resolve All</button>
+  <button class="resolve" onclick="showResult()">Show Result</button>
+</div>
 
-  <h2 class="damage" id="damageDisplay">Total Damage: 0</h2>
-
+<h2 class="damage" id="damageDisplay">Total Damage: 0</h2>
 
 <div class="container">
   <div class="panel">

@@ -4,6 +4,7 @@ let state = {
     miirymCount: 0,
     scourgeCount: 0,
     terrorCount: 0,
+    genericDragons: 0,
     stack: [],
     totalDamage: 0,
     activeEngine: '' // 'scourge' or 'terror'
@@ -12,7 +13,8 @@ let state = {
 let battlefieldState = {
     miirym: 0,
     scourge: 0,
-    terror: 0
+    terror: 0,
+    genericDragons: 0
 };
 
 const CREATURE_POWER = 5; // Terror deals damage equal to entering creature's power
@@ -21,7 +23,35 @@ const CREATURE_POWER = 5; // Terror deals damage equal to entering creature's po
 // Battlefield ETB
 // =====================
 
-function etbMiiryms() {
+// Spawn only Generic Dragons and reset Scourges/Terrors
+function spawnDragons() {
+    const count = parseInt(document.getElementById("dragonInput").value) || 0;
+    if (count <= 0) return;
+
+    state.genericDragons = count;
+
+    // Remove all Scourge and Terror images
+    const battlefieldDiv = document.getElementById("battlefield");
+    Array.from(battlefieldDiv.querySelectorAll("img")).forEach(img => {
+        if (img.src.includes("dragon.png") || img.src.includes("valkas.png") || img.src.includes("terror.png")) {
+            img.remove();
+        }
+    });
+
+    // Reset state
+    battlefieldState.genericDragons = 0;
+    battlefieldState.scourge = 0;
+    battlefieldState.terror = 0;
+    state.scourgeCount = 0;
+    state.terrorCount = 0;
+    state.stack = [];
+    state.totalDamage = 0;
+
+    document.getElementById("stack").innerHTML = "";
+    updateBattlefield();
+    updateDamage();
+}
+function spawnMiiryms() {
     state.miirymCount = parseInt(document.getElementById("miirymInput").value);
 
     // Clear previous battlefield visuals
@@ -31,6 +61,7 @@ function etbMiiryms() {
             img.src.includes("miirym.png") ||
             img.src.includes("valkas.png") ||
             img.src.includes("terror.png")
+
         ) {
             img.remove();
         }
@@ -93,8 +124,8 @@ function pushStackStaggered(abilities, delay = 50) {
     abilities.forEach((abilityFn, index) => {
         setTimeout(() => {
             pushStack(abilityFn.description, abilityFn.resolve);
-                const triggerSound = new Audio("trigger.mp3");
-                triggerSound.play();
+            const triggerSound = new Audio("trigger.mp3");
+            triggerSound.play();
         }, index * delay);
     });
 }
@@ -127,10 +158,13 @@ function initDragonCast() {
         if (!img.src.includes("miirym.png")) img.remove();
     });
 
+    // Scourge himself is always 1
     state.scourgeCount = (state.activeEngine === 'scourge') ? 1 : 0;
     state.terrorCount = (state.activeEngine === 'terror') ? 1 : 0;
+
     battlefieldState.scourge = 0;
     battlefieldState.terror = 0;
+    battlefieldState.genericDragons = 0;
 
     updateBattlefield();
     updateDamage();
@@ -146,15 +180,14 @@ function setupMiirymTriggers(type) {
                 let innerAbilities = [];
 
                 if (type === 'scourge') {
-                    state.scourgeCount++;
-
-                    for (let j = 1; j <= state.scourgeCount; j++) {
-                        innerAbilities.push({
-                            description: "Scourge Trigger #" + j,
-                            resolve: () => dealDamage()
-                        });
-                    }
-                } else {
+    state.scourgeCount++; // Valkas himself counts only
+    for (let j = 1; j <= state.scourgeCount; j++) {
+        innerAbilities.push({
+            description: "Scourge Trigger #" + j,
+            resolve: () => dealDamage()
+        });
+    }
+} else {
                     state.terrorCount++;
                     let existingTerrors = state.terrorCount - 1;
 
@@ -245,7 +278,6 @@ function resolveAll() {
         let elapsed = Date.now() - startTime;
         let newDelay = currentDelay;
 
-        // RAMPING LOGIC
         if (elapsed > 6000) {
             newDelay = 50; 
         } else if (elapsed > 4000) {
@@ -254,7 +286,6 @@ function resolveAll() {
             newDelay = 100;
         }
 
-        // Only restart the interval if the speed actually changed
         if (newDelay !== currentDelay) {
             currentDelay = newDelay;
             clearInterval(interval);
@@ -273,7 +304,8 @@ function dealDamage(fixedAmount = null) {
     if (fixedAmount !== null) {
         state.totalDamage += fixedAmount;
     } else {
-        state.totalDamage += (state.scourgeCount + state.miirymCount);
+        // Add generic dragons to scourge damage
+        state.totalDamage += (state.scourgeCount + state.miirymCount + state.genericDragons);
     }
 
     new Audio("fireball.mp3").play();
@@ -294,17 +326,33 @@ function updateDamage() {
 function updateBattlefield() {
     const battlefieldDiv = document.getElementById("battlefield");
     const verticalOverlap = 60;
-    const startXMiirym = 10;
-    const startXEngine = 180;
     const startY = 10;
 
+    const containerWidth = battlefieldDiv.offsetWidth;
+
+    // Three columns: 0%, 50%, 100% minus image width
+    const imgWidth = 200;
+    const startXMiirym = 0;
+    const startXDragons = (containerWidth - imgWidth) / 2;
+    const startXEngine = containerWidth - imgWidth;
+
+    // Miiryms (left)
     for (let i = battlefieldState.miirym; i < state.miirymCount; i++) {
         battlefieldDiv.appendChild(
             createCreatureImg("miirym.png", startXMiirym, startY + i * verticalOverlap)
         );
-        document.getElementById("roarSound").play();
+        new Audio("etb.mp3").play();
     }
 
+    // Dragons (center)
+    for (let i = battlefieldState.genericDragons; i < state.genericDragons; i++) {
+        battlefieldDiv.appendChild(
+            createCreatureImg("dragon.png", startXDragons, startY + i * verticalOverlap)
+        );
+        new Audio("etb.mp3").play();
+    }
+
+    // Scourge/Terror (right)
     for (let i = battlefieldState.scourge; i < state.scourgeCount; i++) {
         battlefieldDiv.appendChild(
             createCreatureImg("valkas.png", startXEngine, startY + i * verticalOverlap)
@@ -322,6 +370,7 @@ function updateBattlefield() {
     battlefieldState.miirym = state.miirymCount;
     battlefieldState.scourge = state.scourgeCount;
     battlefieldState.terror = state.terrorCount;
+    battlefieldState.genericDragons = state.genericDragons;
 }
 
 function createCreatureImg(src, x, y) {
@@ -368,6 +417,7 @@ function shakeScreen() {
 
 function showResult() {
     state.miirymCount = parseInt(document.getElementById("miirymInput").value);
+    state.genericDragons = parseInt(document.getElementById("dragonInput").value || 0);
     state.totalDamage = 0;
 
     let tempStack = [];
@@ -376,7 +426,7 @@ function showResult() {
         state.scourgeCount = 1;
 
         tempStack.push(() => {
-            state.totalDamage += state.scourgeCount + state.miirymCount;
+            state.totalDamage += state.scourgeCount + state.miirymCount + state.genericDragons;
         });
 
         for (let i = 1; i <= state.miirymCount; i++) {
@@ -386,7 +436,7 @@ function showResult() {
 
                 for (let j = 1; j <= currentScourges; j++) {
                     tempStack.push(() => {
-                        state.totalDamage += state.scourgeCount + state.miirymCount;
+                        state.totalDamage += state.scourgeCount + state.miirymCount  + state.genericDragons;
                     });
                 }
             });

@@ -52,6 +52,19 @@ h1 {
   text-align: center;
 }
 
+#dragonInput {
+  font-size: 50px;
+  font-weight: bold;
+  color: #000000;
+  background: #ffffff;
+  margin-left: 20px;
+  border: none;
+  border-radius: 8px;
+  width: 100px;
+  height: 90px;
+  text-align: center;
+}
+
 button {
   font-weight: bold;
   padding: 20px 15px;
@@ -121,7 +134,8 @@ button:hover { opacity: 0.8; }
 
 #battlefield {
   position: relative;
-  width: 300px;
+  width: 90%;          /* take most of the screen width */
+  max-width: 650px;    /* max width for big screens */
   margin: auto;
   min-height: 400px;
 }
@@ -183,10 +197,19 @@ button:hover { opacity: 0.8; }
 }
 
 #controls {
-    display: flex;
-    justify-content: flex-start; /* Centers items horizontally */
-    align-items: center; /* Centers items vertically */
-    margin-bottom: 30px;
+  display: flex;
+  flex-direction: column; /* stack control rows vertically */
+  gap: 15px;              /* space between rows */
+  margin-bottom: 30px;
+}
+
+.control-row {
+  display: flex;
+  flex-wrap: wrap;       /* allows input + button to wrap on small screens */
+  align-items: center;
+justify-content: flex-end; /* align everything to the right */
+
+  gap: 10px;
 }
 
 .cast span,
@@ -210,6 +233,12 @@ button:hover { opacity: 0.8; }
 .miirym-btn {
     background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("miirym.png") center/cover no-repeat;
     background-size: 120%;
+    background-position: center 30%;
+}
+
+.dragon-btn {
+    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("dragon.png") center/cover no-repeat;
+    background-size: 125%;
     background-position: center 30%;
 }
 
