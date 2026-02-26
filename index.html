@@ -24,6 +24,7 @@ body {
   border-radius: 12px;
   width: 40%;
   min-height: 300px;
+  position: relative;
 }
 
 button {
@@ -42,22 +43,51 @@ button:hover {
 .cast { background: darkred; color: white; }
 .resolve { background: darkblue; color: white; }
 
-.stack-item {
-  background: #333;
-  margin: 5px 0;
-  padding: 6px;
-  border-radius: 6px;
-}
-
 .damage {
   font-size: 28px;
   font-weight: bold;
   color: crimson;
   transition: transform 0.2s ease;
+  display: inline-block;
+  transform-origin: center;
 }
 
 .pulse {
   transform: scale(1.2);
+}
+
+/* Battlefield styling */
+#battlefield {
+  position: relative;
+  width: 300px;
+  margin: auto;
+  min-height: 400px;
+}
+
+#battlefield img {
+  position: absolute;
+  width: 100px;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.7);
+}
+
+/* Stack ability images */
+#stack {
+  position: relative;
+}
+
+.ability {
+  position: absolute;
+  width: 200px;
+  opacity: 0;
+  transform: translateX(-300px); /* start off left */
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.ability.show {
+  opacity: 1;
+  transform: translateX(0);
 }
 </style>
 </head>
@@ -79,15 +109,15 @@ button:hover {
 
 <div class="container">
 
-<div class="panel">
-<h3>Battlefield</h3>
-<div id="battlefield"></div>
-</div>
+  <div class="panel">
+    <h3>Battlefield</h3>
+    <div id="battlefield"></div>
+  </div>
 
-<div class="panel">
-<h3>Stack (Top at Bottom)</h3>
-<div id="stack"></div>
-</div>
+  <div class="panel">
+    <h3>Stack (Top at Bottom)</h3>
+    <div id="stack"></div>
+  </div>
 
 </div>
 
@@ -99,29 +129,10 @@ let state = {
   totalDamage: 0
 };
 
-function updateUI() {
-  document.getElementById("battlefield").innerHTML =
-    "🐉 x" + state.miirymCount + "<br>🔥 x" + state.scourgeCount;
-
+function getStackStartOffset() {
   const stackDiv = document.getElementById("stack");
-  stackDiv.innerHTML = "";
-
-  state.stack.forEach(item => {
-    const div = document.createElement("div");
-    div.className = "stack-item";
-    div.innerText = item.description;
-    stackDiv.appendChild(div);
-  });
-
-  const dmg = document.getElementById("damageDisplay");
-  dmg.innerText = "Total Damage: " + state.totalDamage;
-  dmg.classList.add("pulse");
-  setTimeout(() => dmg.classList.remove("pulse"), 150);
-}
-
-function pushStack(description, resolveFn) {
-  state.stack.push({ description, resolve: resolveFn });
-  updateUI();
+  const headingHeight = stackDiv.previousElementSibling.offsetHeight;
+  return headingHeight + 10; // small padding
 }
 
 function castScourge() {
@@ -130,44 +141,130 @@ function castScourge() {
   state.totalDamage = 0;
   state.stack = [];
 
-  // Original Scourge trigger (bottom)
-  pushStack("Original Scourge Trigger", () => {
-    dealDamage();
-  });
+  // Clear previous stack DOM
+  const stackDiv = document.getElementById("stack");
+  stackDiv.innerHTML = "";
 
-  // Miirym triggers
+  pushStack("Original Scourge Trigger", () => dealDamage());
+
   for (let i = 1; i <= state.miirymCount; i++) {
     pushStack("Miirym Trigger #" + i, () => {
       state.scourgeCount++;
-
       let currentScourges = state.scourgeCount;
       for (let j = 1; j <= currentScourges; j++) {
-        pushStack("Scourge Trigger #" + j, () => {
-          dealDamage();
-        });
+        pushStack("Scourge Trigger #" + j, () => dealDamage());
       }
     });
   }
-
-  updateUI();
 }
+function pushStack(description, resolveFn) {
+  const index = state.stack.length;
+  state.stack.push({ description, resolve: resolveFn });
 
-function dealDamage() {
-  let damage = state.scourgeCount + state.miirymCount;
-  state.totalDamage += damage;
+  const stackDiv = document.getElementById("stack");
+  const abilityOverlap = 30;
+  const startOffset = getStackStartOffset();
+  const stackWidth = stackDiv.offsetWidth;
+
+  const img = document.createElement("img");
+  img.classList.add("ability");
+  img.style.left = (stackWidth / 2 - 100) + "px";
+  img.style.top = startOffset + index * abilityOverlap + "px";
+  img.src = description.includes("Miirym") ? "miirymability.png" : "valkasability.png";
+  stackDiv.appendChild(img);
+
+  // Animate entry
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => img.classList.add("show"));
+  });
+
+  updateBattlefield();
+  updateDamage();
 }
 
 function resolveOne() {
   if (state.stack.length === 0) return;
-  let item = state.stack.pop();
-  item.resolve();
-  updateUI();
+
+  const topIndex = state.stack.length - 1;
+  const removed = state.stack.pop();
+  removed.resolve();
+
+  const stackDiv = document.getElementById("stack");
+  const abilityOverlap = 30;
+  const startOffset = getStackStartOffset();
+  const stackWidth = stackDiv.offsetWidth;
+
+  // Remove the original top ability immediately from DOM
+  const abilityImgs = Array.from(stackDiv.querySelectorAll(".ability"));
+  const originalTopImg = abilityImgs[abilityImgs.length - 1];
+  if (originalTopImg) originalTopImg.remove();
+
+  // Animate exit with a clone
+  const exitImg = document.createElement("img");
+  exitImg.src = removed.description.includes("Miirym") ? "miirymability.png" : "valkasability.png";
+  exitImg.style.width = "200px";
+  exitImg.style.position = "absolute";
+  exitImg.style.left = (stackWidth / 2 - 100) + "px";
+  exitImg.style.top = startOffset + topIndex * abilityOverlap + "px";
+  exitImg.style.transition = "transform 0.3s ease, opacity 0.3s ease";
+  stackDiv.appendChild(exitImg);
+
+  requestAnimationFrame(() => {
+    exitImg.style.transform = "translateX(300px)";
+    exitImg.style.opacity = "0";
+  });
+
+  setTimeout(() => exitImg.remove(), 300);
+
+  // Update positions of remaining abilities
+  const remaining = Array.from(stackDiv.querySelectorAll(".ability"));
+  remaining.forEach((child, i) => {
+    child.style.top = startOffset + i * abilityOverlap + "px";
+  });
+
+  updateBattlefield();
+  updateDamage();
 }
 
 function resolveAll() {
-  while (state.stack.length > 0) {
-    resolveOne();
+  while (state.stack.length > 0) resolveOne();
+}
+
+function dealDamage() {
+  state.totalDamage += state.scourgeCount + state.miirymCount;
+}
+
+function updateBattlefield() {
+  const battlefieldDiv = document.getElementById("battlefield");
+  battlefieldDiv.innerHTML = "";
+
+  const verticalOverlap = 30;
+  const startXMiirym = 10;
+  const startXValkas = 150;
+  const startY = 10;
+
+  for (let i = 0; i < state.miirymCount; i++) {
+    const cardImg = document.createElement("img");
+    cardImg.src = "miirym.png";
+    cardImg.style.left = startXMiirym + "px";
+    cardImg.style.top = startY + i * verticalOverlap + "px";
+    battlefieldDiv.appendChild(cardImg);
   }
+
+  for (let i = 0; i < state.scourgeCount; i++) {
+    const cardImg = document.createElement("img");
+    cardImg.src = "valkas.png";
+    cardImg.style.left = startXValkas + "px";
+    cardImg.style.top = startY + i * verticalOverlap + "px";
+    battlefieldDiv.appendChild(cardImg);
+  }
+}
+
+function updateDamage() {
+  const dmg = document.getElementById("damageDisplay");
+  dmg.innerText = "Total Damage: " + state.totalDamage;
+  dmg.classList.add("pulse");
+  setTimeout(() => dmg.classList.remove("pulse"), 150);
 }
 </script>
 
