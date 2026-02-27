@@ -118,6 +118,7 @@ function pushStack(description, resolveFn) {
     stackDiv.appendChild(img);
     requestAnimationFrame(() => requestAnimationFrame(() => img.classList.add("show")));
     updateBattlefield();
+    updateTopAbilityDamage();
 }
 
 function pushStackStaggered(abilities, delay = 50) {
@@ -258,6 +259,7 @@ function resolveOne() {
 
     updateBattlefield();
     updateDamage();
+    updateTopAbilityDamage();
 }
 
 let resolveAllInProgress = false; // global lock
@@ -267,6 +269,10 @@ function resolveAll() {
 
     resolveAllInProgress = true; // lock
 
+    // Disable all buttons
+    const allButtons = document.querySelectorAll("button");
+    allButtons.forEach(btn => btn.disabled = true);
+
     let startTime = Date.now();
     let currentDelay = 100; 
     let interval;
@@ -275,6 +281,9 @@ function resolveAll() {
         if (state.stack.length === 0) {
             clearInterval(interval);
             resolveAllInProgress = false; // unlock
+
+            // Re-enable buttons
+            allButtons.forEach(btn => btn.disabled = false);
             return;
         }
 
@@ -319,9 +328,34 @@ function dealDamage(fixedAmount = null) {
 
 function updateDamage() {
     const dmg = document.getElementById("damageDisplay");
-    dmg.innerText = "Total Damage: " + state.totalDamage;
-    dmg.classList.add("pulse");
-    setTimeout(() => dmg.classList.remove("pulse"), 150);
+    dmg.innerText = "TOTAL DAMAGE DEALT: " + state.totalDamage;
+
+    if (state.totalDamage !== 0) {
+        dmg.classList.add("pulse");
+        setTimeout(() => dmg.classList.remove("pulse"), 150);
+    }
+}
+
+function updateTopAbilityDamage() {
+    const topDamageDiv = document.getElementById("topAbilityDamage");
+    if (state.stack.length === 0) {
+        topDamageDiv.innerText = "CURRENT ABILITY DAMAGE: 0";
+        return;
+    }
+
+    const topAbility = state.stack[state.stack.length - 1];
+
+    // Compute damage as original dealDamage would
+    let damage = 0;
+    if (topAbility.description.includes("Scourge")) {
+        damage = state.scourgeCount + state.miirymCount + state.genericDragons;
+    } else if (topAbility.description.includes("Terror")) {
+        damage = CREATURE_POWER;
+    } else {
+        damage = 0;
+    }
+
+    topDamageDiv.innerText = "CURRENT ABILITY DAMAGE: " + damage;
 }
 
 // =====================

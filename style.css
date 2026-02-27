@@ -132,6 +132,13 @@ button:hover { opacity: 0.8; }
   text-align: center;
 }
 
+#topAbilityDamage {
+  font-size: 40px;
+  display: block;
+  clear: both;
+  text-align: center;
+}
+
 #battlefield {
   position: relative;
   width: 90%;          /* take most of the screen width */
