@@ -226,25 +226,25 @@ justify-content: flex-end; /* align everything to the right */
 }
 
 .scourge-btn {
-    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("../media/valkas.png") center/cover no-repeat;
+    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("valkas.png") center/cover no-repeat;
     background-size: 122%;
     background-position: center 15%;
 }
 
 .terror-btn {
-    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("../media/terror.png") center/cover no-repeat;
+    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("terror.png") center/cover no-repeat;
     background-size: 120%;
     background-position: center 30%;
 }
 
 .miirym-btn {
-    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("../media/miirym.png") center/cover no-repeat;
+    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("miirym.png") center/cover no-repeat;
     background-size: 120%;
     background-position: center 30%;
 }
 
 .dragon-btn {
-    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("../media/dragon.png") center/cover no-repeat;
+    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("dragon.png") center/cover no-repeat;
     background-size: 125%;
     background-position: center 30%;
 }

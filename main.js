@@ -34,9 +34,9 @@ function spawnDragons() {
     const battlefieldDiv = document.getElementById('battlefield');
     Array.from(battlefieldDiv.querySelectorAll('img')).forEach((img) => {
         if (
-            img.src.includes('../media/dragon.png') ||
-            img.src.includes('../media/valkas.png') ||
-            img.src.includes('../media/terror.png')
+            img.src.includes('dragon.png') ||
+            img.src.includes('valkas.png') ||
+            img.src.includes('terror.png')
         ) {
             img.remove();
         }
@@ -62,9 +62,9 @@ function spawnMiiryms() {
     const battlefieldDiv = document.getElementById('battlefield');
     Array.from(battlefieldDiv.querySelectorAll('img')).forEach((img) => {
         if (
-            img.src.includes('../media/miirym.png') ||
-            img.src.includes('../media/valkas.png') ||
-            img.src.includes('../media/terror.png')
+            img.src.includes('miirym.png') ||
+            img.src.includes('valkas.png') ||
+            img.src.includes('terror.png')
         ) {
             img.remove();
         }
@@ -111,11 +111,11 @@ function pushStack(description, resolveFn) {
     img.style.top = startOffset + index * abilityOverlap + 'px';
 
     if (description.includes('Miirym')) {
-        img.src = '../media/miirymability.png';
+        img.src = 'miirymability.png';
     } else if (description.includes('Terror')) {
-        img.src = '../media/terrorability.png';
+        img.src = 'terrorability.png';
     } else {
-        img.src = '../media/valkasability.png';
+        img.src = 'valkasability.png';
     }
 
     stackDiv.appendChild(img);
@@ -128,7 +128,7 @@ function pushStackStaggered(abilities, delay = 50) {
     abilities.forEach((abilityFn, index) => {
         setTimeout(() => {
             pushStack(abilityFn.description, abilityFn.resolve);
-            const triggerSound = new Audio('../media/trigger.mp3');
+            const triggerSound = new Audio('trigger.mp3');
             triggerSound.play();
         }, index * delay);
     });
@@ -159,7 +159,7 @@ function initDragonCast() {
 
     const battlefieldDiv = document.getElementById('battlefield');
     Array.from(battlefieldDiv.querySelectorAll('img')).forEach((img) => {
-        if (!img.src.includes('../media/miirym.png')) img.remove();
+        if (!img.src.includes('miirym.png')) img.remove();
     });
 
     // Scourge himself is always 1
@@ -234,11 +234,11 @@ function resolveOne() {
     const exitImg = document.createElement('img');
 
     if (removed.description.includes('Miirym')) {
-        exitImg.src = '../media/miirymability.png';
+        exitImg.src = 'miirymability.png';
     } else if (removed.description.includes('Terror')) {
-        exitImg.src = '../media/terrorability.png';
+        exitImg.src = 'terrorability.png';
     } else {
-        exitImg.src = '../media/valkasability.png';
+        exitImg.src = 'valkasability.png';
     }
 
     exitImg.style.width = '200px';
@@ -325,7 +325,7 @@ function dealDamage(fixedAmount = null) {
         state.totalDamage += state.scourgeCount + state.miirymCount + state.genericDragons;
     }
 
-    new Audio('../media/fireball.mp3').play();
+    new Audio('fireball.mp3').play();
     shakeScreen();
 }
 
@@ -381,32 +381,32 @@ function updateBattlefield() {
     // Miiryms (left)
     for (let i = battlefieldState.miirym; i < state.miirymCount; i++) {
         battlefieldDiv.appendChild(
-            createCreatureImg('../media/miirym.png', startXMiirym, startY + i * verticalOverlap)
+            createCreatureImg('miirym.png', startXMiirym, startY + i * verticalOverlap)
         );
-        new Audio('../media/etb.mp3').play();
+        new Audio('etb.mp3').play();
     }
 
     // Dragons (center)
     for (let i = battlefieldState.genericDragons; i < state.genericDragons; i++) {
         battlefieldDiv.appendChild(
-            createCreatureImg('../media/dragon.png', startXDragons, startY + i * verticalOverlap)
+            createCreatureImg('dragon.png', startXDragons, startY + i * verticalOverlap)
         );
-        new Audio('../media/etb.mp3').play();
+        new Audio('etb.mp3').play();
     }
 
     // Scourge/Terror (right)
     for (let i = battlefieldState.scourge; i < state.scourgeCount; i++) {
         battlefieldDiv.appendChild(
-            createCreatureImg('../media/valkas.png', startXEngine, startY + i * verticalOverlap)
+            createCreatureImg('valkas.png', startXEngine, startY + i * verticalOverlap)
         );
-        new Audio('../media/etb.mp3').play();
+        new Audio('etb.mp3').play();
     }
 
     for (let i = battlefieldState.terror; i < state.terrorCount; i++) {
         battlefieldDiv.appendChild(
-            createCreatureImg('../media/terror.png', startXEngine, startY + i * verticalOverlap)
+            createCreatureImg('terror.png', startXEngine, startY + i * verticalOverlap)
         );
-        new Audio('../media/etb.mp3').play();
+        new Audio('etb.mp3').play();
     }
 
     battlefieldState.miirym = state.miirymCount;
