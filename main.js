@@ -25,10 +25,7 @@ const CREATURE_POWER = 5; // Terror deals damage equal to entering creature's po
 
 // Spawn only Generic Dragons and reset Scourges/Terrors
 function spawnDragons() {
-    const count = parseInt(document.getElementById('dragonInput').value) || 0;
-    if (count <= 0) return;
-
-    state.genericDragons = count;
+    state.genericDragons = parseInt(document.getElementById('dragonInput').value);
 
     // Remove all Scourge and Terror images
     const battlefieldDiv = document.getElementById('battlefield');
