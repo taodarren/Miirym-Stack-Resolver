@@ -154,7 +154,7 @@ button:hover { opacity: 0.8; }
   width: 200px;
   opacity: 0;
   transform: translateX(-300px);
-  transition: transform 0.1s ease, opacity 0.1s ease;
+  transition: transform 0.1s ease-out, opacity 0.1s ease;
   box-shadow: 0 14px 18px rgba(0,0,0,0.7);
 }
 

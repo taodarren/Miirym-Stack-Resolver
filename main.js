@@ -260,8 +260,12 @@ function resolveOne() {
     updateDamage();
 }
 
+let resolveAllInProgress = false; // global lock
+
 function resolveAll() {
-    if (state.stack.length === 0) return;
+    if (state.stack.length === 0 || resolveAllInProgress) return;
+
+    resolveAllInProgress = true; // lock
 
     let startTime = Date.now();
     let currentDelay = 100; 
@@ -270,6 +274,7 @@ function resolveAll() {
     const runResolution = () => {
         if (state.stack.length === 0) {
             clearInterval(interval);
+            resolveAllInProgress = false; // unlock
             return;
         }
 
@@ -279,7 +284,7 @@ function resolveAll() {
         let newDelay = currentDelay;
 
         if (elapsed > 6000) {
-            newDelay = 50; 
+            newDelay = 55; 
         } else if (elapsed > 4000) {
             newDelay = 75; 
         } else if (elapsed > 2000) {
