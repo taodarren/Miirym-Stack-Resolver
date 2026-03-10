@@ -504,38 +504,53 @@ function shakeScreen() {
 function showResult() {
     state.miirymCount = parseInt(document.getElementById('miirymInput').value);
     state.genericDragons = parseInt(document.getElementById('dragonInput').value || 0);
+    state.roamingThroneCount = parseInt(document.getElementById('throneInput').value || 0);
+
     state.totalDamage = 0;
 
     let tempStack = [];
+    const multiplier = getTriggerMultiplier();
 
     if (state.activeEngine === 'scourge') {
         state.scourgeCount = 1;
 
-        tempStack.push(() => {
-            state.totalDamage += state.scourgeCount + state.miirymCount + state.genericDragons;
-        });
+        for (let i = 1; i <= multiplier; i++) {
+            tempStack.push(() => {
+                state.totalDamage +=
+                    state.scourgeCount +
+                    state.miirymCount +
+                    state.genericDragons +
+                    state.roamingThroneCount;
+            });
+        }
 
-        for (let i = 1; i <= state.miirymCount; i++) {
+        for (let i = 1; i <= state.miirymCount * multiplier; i++) {
             tempStack.push(() => {
                 state.scourgeCount++;
+
                 let currentScourges = state.scourgeCount;
 
-                for (let j = 1; j <= currentScourges; j++) {
+                for (let j = 1; j <= currentScourges * multiplier; j++) {
                     tempStack.push(() => {
                         state.totalDamage +=
-                            state.scourgeCount + state.miirymCount + state.genericDragons;
+                            state.scourgeCount +
+                            state.miirymCount +
+                            state.genericDragons +
+                            state.roamingThroneCount;
                     });
                 }
             });
         }
-    } else if (state.activeEngine === 'terror') {
+    }
+
+    else if (state.activeEngine === 'terror') {
         state.terrorCount = 1;
 
-        for (let i = 1; i <= state.miirymCount; i++) {
+        for (let i = 1; i <= state.miirymCount * multiplier; i++) {
             tempStack.push(() => {
                 let existingTerrors = state.terrorCount;
 
-                for (let j = 1; j <= existingTerrors; j++) {
+                for (let j = 1; j <= existingTerrors * multiplier; j++) {
                     tempStack.push(() => {
                         state.totalDamage += CREATURE_POWER;
                     });
