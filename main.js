@@ -5,6 +5,7 @@ let state = {
     scourgeCount: 0,
     terrorCount: 0,
     genericDragons: 0,
+    roamingThroneCount: 0,
     stack: [],
     totalDamage: 0,
     activeEngine: '', // 'scourge' or 'terror'
@@ -14,6 +15,7 @@ let battlefieldState = {
     miirym: 0,
     scourge: 0,
     terror: 0,
+    roamingThrone: 0,
     genericDragons: 0,
 };
 
@@ -81,6 +83,36 @@ function spawnMiiryms() {
     updateDamage();
 }
 
+function spawnThrones() {
+    state.roamingThroneCount = parseInt(
+        document.getElementById('throneInput').value
+    );
+
+        // Remove all Scourge and Terror images
+    const battlefieldDiv = document.getElementById('battlefield');
+    Array.from(battlefieldDiv.querySelectorAll('img')).forEach((img) => {
+        if (
+            img.src.includes('throne.png') ||
+            img.src.includes('valkas.png') ||
+            img.src.includes('terror.png')
+        ) {
+            img.remove();
+        }
+    });
+
+    // Reset state
+    battlefieldState.roamingThrone = 0;
+    battlefieldState.scourge = 0;
+    battlefieldState.terror = 0;
+    state.scourgeCount = 0;
+    state.terrorCount = 0;
+    state.stack = [];
+    state.totalDamage = 0;
+
+    document.getElementById('stack').innerHTML = '';
+    updateBattlefield();
+    updateDamage();
+}
 // =====================
 // Stack Helpers
 // =====================
@@ -174,7 +206,7 @@ function initDragonCast() {
 function setupMiirymTriggers(type) {
     let staggeredAbilities = [];
 
-    for (let i = 1; i <= state.miirymCount; i++) {
+    for (let i = 1; i <= state.miirymCount * getTriggerMultiplier(); i++) {
         staggeredAbilities.push({
             description: 'Miirym Trigger #' + i,
             resolve: () => {
@@ -182,7 +214,7 @@ function setupMiirymTriggers(type) {
 
                 if (type === 'scourge') {
                     state.scourgeCount++; // Valkas himself counts only
-                    for (let j = 1; j <= state.scourgeCount; j++) {
+                    for (let j = 1; j <= state.scourgeCount * getTriggerMultiplier(); j++) {
                         innerAbilities.push({
                             description: 'Scourge Trigger #' + j,
                             resolve: () => dealDamage(),
@@ -192,7 +224,7 @@ function setupMiirymTriggers(type) {
                     state.terrorCount++;
                     let existingTerrors = state.terrorCount - 1;
 
-                    for (let j = 1; j <= existingTerrors; j++) {
+                    for (let j = 1; j <= existingTerrors * getTriggerMultiplier(); j++) {
                         innerAbilities.push({
                             description: 'Terror Trigger #' + j,
                             resolve: () => dealDamage(CREATURE_POWER),
@@ -211,6 +243,9 @@ function setupMiirymTriggers(type) {
 // =====================
 // RESOLVE STACK
 // =====================
+function getTriggerMultiplier() {
+    return 1 + state.roamingThroneCount;
+}
 
 function resolveOne() {
     if (state.stack.length === 0) return;
@@ -319,7 +354,7 @@ function dealDamage(fixedAmount = null) {
         state.totalDamage += fixedAmount;
     } else {
         // Add generic dragons to scourge damage
-        state.totalDamage += state.scourgeCount + state.miirymCount + state.genericDragons;
+        state.totalDamage += state.scourgeCount + state.miirymCount + state.genericDragons +state.roamingThroneCount;
     }
 
     new Audio('fireball.mp3').play();
@@ -348,7 +383,7 @@ function updateTopAbilityDamage() {
     // Compute damage as original dealDamage would
     let damage = 0;
     if (topAbility.description.includes('Scourge')) {
-        damage = state.scourgeCount + state.miirymCount + state.genericDragons;
+        damage = state.scourgeCount + state.miirymCount + state.genericDragons + state.roamingThroneCount;
     } else if (topAbility.description.includes('Terror')) {
         damage = CREATURE_POWER;
     } else {
@@ -391,6 +426,13 @@ function updateBattlefield() {
         new Audio('etb.mp3').play();
     }
 
+    for (let i = battlefieldState.roamingThrone; i < state.roamingThroneCount; i++) {
+        battlefieldDiv.appendChild(
+            createCreatureImg('throne.png', startXEngine, startY + i * verticalOverlap)
+        );
+        new Audio('etb.mp3').play();
+    }
+
     // Scourge/Terror (right)
     for (let i = battlefieldState.scourge; i < state.scourgeCount; i++) {
         battlefieldDiv.appendChild(
@@ -410,6 +452,7 @@ function updateBattlefield() {
     battlefieldState.scourge = state.scourgeCount;
     battlefieldState.terror = state.terrorCount;
     battlefieldState.genericDragons = state.genericDragons;
+    battlefieldState.throne = state.roamingThroneCount;
 }
 
 function createCreatureImg(src, x, y) {
