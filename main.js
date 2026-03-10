@@ -171,7 +171,12 @@ function castScourge() {
     state.activeEngine = 'scourge';
     initDragonCast();
 
-    pushStack('Original Scourge Trigger', () => dealDamage());
+    const triggers = getTriggerMultiplier();
+
+    for (let i = 1; i <= triggers; i++) {
+        pushStack('Original Scourge Trigger #' + i, () => dealDamage());
+    }
+
     setupMiirymTriggers('scourge');
 }
 
@@ -452,7 +457,7 @@ function updateBattlefield() {
     battlefieldState.scourge = state.scourgeCount;
     battlefieldState.terror = state.terrorCount;
     battlefieldState.genericDragons = state.genericDragons;
-    battlefieldState.throne = state.roamingThroneCount;
+    battlefieldState.roamingThrone = state.roamingThroneCount;
 }
 
 function createCreatureImg(src, x, y) {
