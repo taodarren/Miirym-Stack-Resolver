@@ -193,7 +193,9 @@ function initDragonCast() {
 
     const battlefieldDiv = document.getElementById('battlefield');
     Array.from(battlefieldDiv.querySelectorAll('img')).forEach((img) => {
-        if (!img.src.includes('miirym.png')) img.remove();
+        if (img.src.includes('valkas.png') || img.src.includes('terror.png')) {
+            img.remove();
+        }
     });
 
     // Scourge himself is always 1
@@ -202,7 +204,6 @@ function initDragonCast() {
 
     battlefieldState.scourge = 0;
     battlefieldState.terror = 0;
-    battlefieldState.genericDragons = 0;
 
     updateBattlefield();
     updateDamage();
@@ -409,11 +410,14 @@ function updateBattlefield() {
 
     const containerWidth = battlefieldDiv.offsetWidth;
 
-    // Three columns: 0%, 50%, 100% minus image width
     const imgWidth = 200;
-    const startXMiirym = 0;
-    const startXDragons = (containerWidth - imgWidth) / 2;
-    const startXEngine = containerWidth - imgWidth;
+
+const columnWidth = containerWidth / 4;
+
+const startXMiirym = columnWidth * 0;
+const startXDragons = columnWidth * 1;
+const startXThrone = columnWidth * 2;
+const startXEngine = columnWidth * 3;
 
     // Miiryms (left)
     for (let i = battlefieldState.miirym; i < state.miirymCount; i++) {
@@ -433,7 +437,7 @@ function updateBattlefield() {
 
     for (let i = battlefieldState.roamingThrone; i < state.roamingThroneCount; i++) {
         battlefieldDiv.appendChild(
-            createCreatureImg('throne.png', startXEngine, startY + i * verticalOverlap)
+            createCreatureImg('throne.png', startXThrone, startY + i * verticalOverlap)
         );
         new Audio('etb.mp3').play();
     }
