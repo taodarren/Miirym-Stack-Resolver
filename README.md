@@ -1,7 +1,7 @@
 ﻿# Miirym Stack Simulator
 
 [Click here to open the Miirym Stack Simulator directly on your browser!](https://taodarren.github.io/Miirym-Stack-Resolver/)
-Tired of wondering exactly how much damage your **Miirym**, **Sentinel Wurm**, **Scourge of Valkas**, or **Terror of the Peaks** will deal? Calculating all those triggers manually is a headache and will make your pod go zzzzz...
+Tired of wondering exactly how much damage your **Miirym**, **Sentinel Wurm**, **Roaming Throne**, **Scourge of Valkas**, or **Terror of the Peaks** will deal? Calculating all those triggers manually is a headache and will make your pod go zzzzz...
 
 Worry no more for this tool is for you, Magic The Gathering enthusiast!
 
@@ -12,6 +12,7 @@ With this simulator, you can visualize and resolve your stack of abilities in re
 1. **Input your creatures**
 
    * Enter the number of **Miiryms** on your battlefield.
+   * Enter the number of **Roaming Thrones** on your battlefield.
    * Enter the number of **other dragons** on your battlefield, shown as dragon tokens.
 
 2. **Cast one of the big dragons**
@@ -32,6 +33,7 @@ With this simulator, you can visualize and resolve your stack of abilities in re
 ## Features
 
 * Simulates Miirym, Sentinel Wurm interactions with Scourge of Valkas or Terror of the Peaks.
+* Can also simulate with number of Roaming thrones or other dragons (shown as tokens) on the battlefield.
 * Shows per-ability damage dynamically on the stack.
 * Animates cascading triggers for Scourge of Valkas and Terror of the Peaks.
 
