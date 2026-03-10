@@ -263,9 +263,9 @@ justify-content: flex-end; /* align everything to the right */
 }
 
 .throne-btn {
-    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("roaming.png") center/cover no-repeat;
+    background: linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url("throne.png") center/cover no-repeat;
     background-size: 125%;
-    background-position: center 30%;
+    background-position: center 23%;
 }
 
 
