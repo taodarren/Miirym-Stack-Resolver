@@ -7,14 +7,30 @@ body {
   padding: 20px;
   font-weight: bold;
   overflow-x: hidden;
+  text-align: center; /* center inline/inline-block elements */
+
 }
 
 h1 {
   font-size: 120px;
-  text-align: left;
+  text-align: center;
   margin: 0 0 20px 0;
   font-weight: bold;
   color: #fff;
+}
+
+h2 {
+  display: inline-block;
+  padding: 15px 30px;
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+  color: #ffffff;                   /* text color */
+  background-color: transparent;    /* no background */
+  border: 2px solid #ffffff;        /* white outline */
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  margin: 80px auto 40px auto;
 }
 
 .container {
@@ -218,20 +234,32 @@ button:hover { opacity: 0.8; }
 
 #controls {
   display: flex;
-  flex-direction: column; /* stack control rows vertically */
-  gap: 15px;              /* space between rows */
+  flex-direction: column;
+  gap: 15px;
   margin-bottom: 30px;
+  align-items: center; /* keep rows on the left */
 }
 
 .control-row {
   display: flex;
-  flex-wrap: wrap;       /* allows input + button to wrap on small screens */
   align-items: center;
-justify-content: flex-end; /* align everything to the right */
-
   gap: 10px;
 }
 
+.control-row label {
+  width: 500px; /* fixed width for all labels to align inputs/buttons */
+  text-align: right; /* right-align text inside labels */
+  font-size: 36px;
+  white-space: nowrap;
+}
+
+.control-row input {
+  margin-left: 20px;
+}
+
+.control-row button {
+  margin-left: 10px;
+}
 .cast span,
 .cast {
     position: relative;
