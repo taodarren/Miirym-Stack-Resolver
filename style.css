@@ -30,13 +30,29 @@ h2 {
   border: 2px solid #ffffff;        /* white outline */
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  margin: 80px auto 40px auto;
+  margin: 40px auto 20px auto;
 }
 
 .container {
   display: flex;
   justify-content: space-around;
   margin-top: 20px;
+}
+
+.horizontalContainer {
+  display: flex;
+  justify-content: space-evenly;
+
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
 }
 
 .panel {
@@ -104,24 +120,23 @@ button {
   font-size: 24px;
   height: 90px;
 }
-/* Resolve buttons colors */
-#resolveButtons button:nth-child(1) { /* Resolve One */
-    background: #ffffff;  /* Green */
+
+#resolveButtons button:nth-child(1) {
+    background: #ffffff;
     color: rgb(0, 0, 0);
 }
 
-#resolveButtons button:nth-child(2) { /* Resolve All */
-    background: #ffffff;  /* Red */
+#resolveButtons button:nth-child(2) {
+    background: #ffffff;
     color: rgb(0, 0, 0);
 }
 
-#resolveButtons button:nth-child(3) { /* Show Result */
-    background: #ffffff;  /* Blue */
+#resolveButtons button:nth-child(3) {
+    background: #ffffff;
     color: rgb(0, 0, 0);
 }
 
 
-/* Keep the hover effect */
 #resolveButtons button:hover {
     opacity: 0.8;
 }
@@ -134,7 +149,6 @@ button:hover { opacity: 0.8; }
 
 #resolveButtons {
   text-align: center;
-  margin-top: 10px;
 }
 
 #resolveButtons button {

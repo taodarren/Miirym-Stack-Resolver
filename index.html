@@ -8,6 +8,9 @@
 <body>
 
 <h1>MIIRYM STACK SIMULATOR</h1>
+
+<div class="horizontalContainer">
+  <div class="leftColumn">
 <h2>STEP 1: SET UP INITIAL BATTLEFIELD</h2>
 <div id="controls">
   <!-- Miirym input/button -->
@@ -30,7 +33,8 @@
     <button class="cast throne-btn" onclick="spawnThrones()">ENTER ROAMING THRONE</button>
   </div>
 </div>
-
+</div>
+<div class="rightColumn">
 <h2>STEP 2: CAST BIG DRAGON</h2>
 
 <div class="engine-buttons">
@@ -49,6 +53,8 @@
   <button class="resolve" onclick="resolveOne()">RESOLVE ONE</button>
   <button class="resolve" onclick="resolveAll()">RESOLVE ALL</button>
   <button class="resolve" onclick="showResult()">SHOW RESULT</button>
+</div>
+</div>
 </div>
 
 <div class="damage" id="damageDisplay">TOTAL DAMAGE DEALT: 0 </div>
